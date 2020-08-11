@@ -1,0 +1,19 @@
+{
+  "name": "Employee_Tracker",
+  "version": "1.0.0",
+  "description": "a CLI application used to store and update employee info",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Wilson Birch",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wilsonbirch/Employee_Tracker_DB-CLI"
+  },
+  "dependencies": {
+    "mysql": "^2.18.1",
+    "nodemon": "^2.0.4"
+  }
+}
