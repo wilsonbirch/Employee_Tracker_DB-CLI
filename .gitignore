@@ -1,1 +1,3 @@
-Employee_Tracker_DB-CLI\employee_tracker_connection.js
+employee_tracker_connection.js
+node_modules
+package-lock.json
