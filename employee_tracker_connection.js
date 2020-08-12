@@ -48,7 +48,7 @@ const connection = mysql.createConnection({
     host:"localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "3Strong13!",
     database: "employees_db"
 });
 
@@ -123,11 +123,18 @@ function action() {
                         ;
                     });
 
-                    console.log(resultArray)
+                    
                     connection.end();
+                });
+
+                inquirer
+                    .prompt(addEmployeeData)
+
+                    .then(b => {
+                        console.log(resultArray)
                     });
 
-                };
+            };
                     
 
                 //inquirer
