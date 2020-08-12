@@ -4,7 +4,9 @@ const cTable = require('console.table');
 
 const actions = ["View all employees?", 
                 "View all employees by department?", 
-                "View all employees by role?", 
+                "View all employees by role?",
+                "View departments?",
+                "View roles?", 
                 "Add employee?", 
                 "Add company role?", 
                 "Add department?", 
@@ -18,8 +20,29 @@ const initialQuestions = [{
     choices: actions
 }];
 
+const addEmployeeData = [{
+        type: 'input',
+        name: 'employeeFirstName',
+        message: "New employee first name?"
+    },{
+        type: 'input',
+        name: 'employeeLastName',
+        message: 'New employee last name?'
 
-
+    }, {
+        type: 'input',
+        name: 'employeeTitle',
+        message: 'New employee title?'
+    },{
+        type: 'input',
+        name: 'employeeSalary',
+        message: 'New employee salary?'
+    },{
+        type:'list',
+        name: 'employeeDepartment',
+        message: 'New employee department?'
+        
+}];
 
 const connection = mysql.createConnection({
     host:"localhost",
@@ -35,7 +58,6 @@ connection.connect((err) => {
     let x = true
     action();
 });
-
 
 function action() {
 
@@ -66,9 +88,9 @@ function action() {
                 });
             }
 
-            if (action === "View all employees by role?"){
+            if (action === "View departments?"){
 
-                connection.query('SELECT name, first_name, last_name, title, salary FROM employee INNER JOIN employee_role ON employee_role.id = employee.role_id INNER JOIN departments ON departments.id = employee_role.department_id', (err, rows) => {
+                connection.query('select * from departments;', (err, rows) => {
                     if (err) throw err;
                     console.table(rows);
                     connection.end();
@@ -76,46 +98,36 @@ function action() {
                 });
             }
 
-            //if (action === "Add employee?"){
+            if (action === "View roles?"){
 
-                ///let i =0;
-                //let rowArray, resultArray = [];
+                connection.query('select * from employee_role;', (err, rows) => {
+                    if (err) throw err;
+                    console.table(rows);
+                    connection.end();
+                    
+                });
+            }
 
-                ///connection.query('SELECT * from departments;', (err, rows) => {
-                    //if (err) throw err;
-                    //rowArray = JSON.parse(JSON.stringify(rows));
+            if (action === "Add employee?"){
 
-                    //rowArray.id.forEach(
-                        //console.log(rowArray)
-                    ////)
-                    //console.log(resultArray);
-                    //connection.end();
-                /////});
+                let i =0;
+                let rowArray, resultArray = [];
 
-                const addEmployeeData = [
-                    {
-                        type: 'input',
-                        name: 'employeeFirstName',
-                        message: "New employee first name?"
-                    },{
-                        type: 'input',
-                        name: 'employeeLastName',
-                        message: 'New employee last name?'
-                
-                    }, {
-                        type: 'input',
-                        name: 'employeeTitle',
-                        message: 'New employee title?'
-                    },{
-                        type: 'input',
-                        name: 'employeeSalary',
-                        message: 'New employee salary?'
-                    },{
-                        type:'list',
-                        name: 'employeeDepartment',
-                        message: 'New employee department?'
-                        
-                    }]
+                connection.query('SELECT * from departments;', (err, rows) => {
+                    if (err) throw err;
+
+                    rowArray = JSON.parse(JSON.stringify(rows));
+                    rowArray.forEach(function(event){
+                        resultArray[i] = rowArray[i].name;
+                        i++;
+                        ;
+                    });
+
+                    console.log(resultArray)
+                    connection.end();
+                    });
+
+                };
                     
 
                 //inquirer
@@ -139,6 +151,5 @@ function action() {
             //});
         //}
 
-    });
-
-}
+});
+};
