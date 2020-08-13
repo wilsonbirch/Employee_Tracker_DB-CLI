@@ -10,7 +10,7 @@ const actions = ["View all employees?",
                 "Add employee?", 
                 "Add company role?", 
                 "Add department?", 
-                "Update Employee?"]  
+                "Update employee roles?"]  
 
 
 const initialQuestions = [{
@@ -26,7 +26,7 @@ const connection = mysql.createConnection({
     host:"localhost",
     port: 3306,
     user: "root",
-    password: "",
+    password: "3Strong13!",
     database: "employees_db"
 });
 
@@ -260,35 +260,83 @@ function action() {
                     })
             }
 
-            if (action === "Update Employee?"){
+            if (action === "Update employee roles?"){
                 
                 let updateEmployeeArray, resultArrayEmployee = [];
+
                 connection.query('select * from employee;', (err, rows) => {
                     if (err) throw err;
 
                     i=0;
                     updateEmployeeArray = JSON.parse(JSON.stringify(rows));
                     updateEmployeeArray.forEach(function(event){
+                        
                         resultArrayEmployee[i] = updateEmployeeArray[i].first_name + ' ' + updateEmployeeArray[i].last_name;
                         i++;
                     
                     });
-                });
+                    
 
-                    console.table(updateEmployeeArray);
+                    const possibleUpdates = [`Job Title`];
 
-                const updateEmployeeQuestions = [{
-                    type: `list`,
-                    name: `employeeToUpdate`,
-                    message: `Which employee would you like to update?`,
-                    choices: updateEmployeeArray
-                }]
+                    const updateEmployeeQuestions = [{
+                        type: `list`,
+                        name: `employeeToUpdate`,
+                        message: `Which employee would you like to update?`,
+                        choices: resultArrayEmployee
+                    }];
+    
+                    inquirer
+                        .prompt(updateEmployeeQuestions)
+    
+                        .then(d => {
+                            let employeeToUpdate = d.employeeToUpdate;
+                            let propertyToChange = d.propertyToChange
+    
+                            let index = resultArrayEmployee.findIndex(element => element == employeeToUpdate);
+                            employeeToUpdateId = index+1;
 
-                inquirer
-                    .prompt
-            
+                            let i=0;
+                            let rowArrayTitle, resultArrayTitle = []; 
+                            connection.query('SELECT * from employee_role;', (err, rows) => {
+                                if (err) throw err;
+                                
+                                rowArrayTitle = JSON.parse(JSON.stringify(rows));
+                                rowArrayTitle.forEach(function(event){
+                                    resultArrayTitle[i] = rowArrayTitle[i].title;
+                                    i++;
+                                
+                                });
 
-            connection.end();
+                                const changeDepartmentNameQuestion = [{
+                                    type: `list`,
+                                    name: `newTitle`,
+                                    message: `Select new role for this employee:`,
+                                    choices: resultArrayTitle
+                                }];
+    
+                                    inquirer
+                                        .prompt(changeDepartmentNameQuestion)
+    
+                                        .then (e => {
+
+                                            let newTitle = e.newTitle;
+
+                                            let indexOne = resultArrayTitle.findIndex(element => element == newTitle);
+                                            let newRoleId = indexOne+1;
+
+                                            connection.query('UPDATE employee SET role_id = ' + newRoleId + ' WHERE id =' + employeeToUpdateId +';', (err, rows) => {
+                                                if (err) throw err;
+                                                
+                                            });
+                                            connection.end();
+                                        });
+                                        
+                                });
+                                
+                            });
+                            
+                        });
         }
     });
 };
